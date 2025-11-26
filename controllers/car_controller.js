@@ -1,8 +1,5 @@
 const car_model = require('./../models/car_model');
 
-/* let testObj = { "price": { "$ne": 11000 }, "color": { "$nin": ["Red", "Black"] } };
-console.log("testObj :");
-console.log(testObj); */
 // **** Handlers ****
 // Root
 exports.root = (req, res) => {
@@ -135,8 +132,8 @@ exports.update_car = async (req, res) => {
         });
     }
 }
-/* Delete */
 
+/* Delete */
 exports.delete_car = async (req, res) => {
     console.log(req.body);
     try {

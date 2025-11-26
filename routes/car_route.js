@@ -1,6 +1,5 @@
 const express = require('express');
 const carRouter = express.Router();
-
 const CarController = require('./../controllers/car_controller')
 
 // Routes
