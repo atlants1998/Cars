@@ -1,5 +1,5 @@
 const car_model = require('./../models/car_model');
-
+const APIFeaures = require('../utils/apiFeatures');
 // **** Handlers ****
 // Root
 exports.root = (req, res) => {
@@ -10,7 +10,6 @@ exports.root = (req, res) => {
     console.log("Root Page");
 };
 
-
 // Cars
 /* Read all */
 exports.cars = async (req, res) => {
@@ -18,56 +17,11 @@ exports.cars = async (req, res) => {
     console.log(req.query); */
 
     // Build the Query
-    let query = car_model.find();
-
-    // Filters
-    if (req.query) {
-
-
-        let queryObj = { ...req.query };
-
-        let excludedFields = ['page', 'limit', 'sort', 'fields'];
-        excludedFields.forEach(element => {
-            delete queryObj[element];
-        });
-
-        // Filter
-        let queryStr = JSON.stringify(queryObj);
-        queryStr = queryStr.replace(
-            /\b(gte|gt|lte|lt|ne|nin)\b/g,
-            match => `$${match}`
-        );
-        queryObj = JSON.parse(queryStr);
-        query = query.find(queryObj);
-
-        // Sort
-        if (req.query.sort) {
-            const sortBy = req.query.sort.split(',').join(' ');
-            console.log(sortBy);
-            query = query.sort(sortBy);
-        }
-
-        // Page & limit
-        const limit = req.query.limit * 1 || 100;
-        console.log('limit: ', limit);
-        const page = req.query.page * 1 || 1;
-        console.log('page: ', page);
-        const skip = (page - 1) * limit;
-        console.log('skip: ', skip);
-        query = query.skip(skip).limit(limit);
-
-        // Field limit
-        if (req.query.fields) {
-            const fields = req.query.fields.split(',').join(' ');
-            console.log(fields);
-            query = query.select(fields);
-        }
-
-
-    }
+    /* let query = car_model.find(); */
 
     // Execute
-    const cars = await query;
+    const features = new APIFeaures(car_model.find(), req.query).filter().sort().paginate().limitFields();
+    const cars = await features.query;
 
     res.status(200).json({
         status: 'ok',
